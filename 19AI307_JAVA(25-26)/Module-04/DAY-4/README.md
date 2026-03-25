@@ -1,23 +1,36 @@
-# Ex.No:4(E) DESIGN PATTERN  ---- MEDIATOR PATTERN
+# Ex.No:4(D) DESIGN PATTERN -- ABSTRACT FACTORY
 
 ## QUESTION:
-Create a ChatRoom class (mediator) and two users (colleagues) who send and receive messages through it. No direct communication allowed.
+Create a program that sends different types of notifications: "email", "sms", and "push". Use the Factory Pattern to generate the appropriate notification sender and call its notifyUser() method.
 
 ## AIM:
-Implement the Mediator pattern using a ChatRoom class to manage communication between User objects, preventing direct interaction.
+To develop a Java program that uses the Factory Pattern to generate different types of notifications—Email, SMS, and Push—and call the appropriate notifyUser() method based on user input.
 
 ## ALGORITHM :
-1. Create a ChatRoom class that holds a collection of users, registers users using registerUser(), delivers messages using sendMessage(from, to, message).
+1. Define a Notification interface with a method notifyUser().
 
-2. Create a User class containing a user name, a reference to the ChatRoom mediator, a send() method that passes messages to the chat room, a receive() method to display incoming messages.
+2. Implement three classes EmailNotification, SMSNotification, and PushNotification, each overriding notifyUser() with specific behavior.
 
-3. Read two user names and create User objects, automatically registering them with the chat room.
+3. Create a NotificationFactory class containing a method createNotification(String type) that:
 
-4. Read the number of chat exchanges.
+4. Returns an EmailNotification object when type is "email".
 
-5. For each exchange read sender, receiver, and message, call the corresponding user’s send() method.
+5. Returns an SMSNotification object when type is "sms".
 
-6. Ensure all communication happens only through the mediator (ChatRoom), not directly between users.
+6. Returns a PushNotification object when type is "push".
+
+7. Returns null for invalid types.
+
+8. Create a NotificationFactory object.
+
+9. Read user input in a loop until "exit" is entered.
+
+10. Use the factory to create the correct notification object.
+
+11. If the object is valid, call notifyUser(); otherwise print an error message.
+
+12. Close the scanner after exiting the loop.
+
 
 
 
@@ -25,7 +38,7 @@ Implement the Mediator pattern using a ChatRoom class to manage communication be
 ## PROGRAM:
  ```
 /*
-Program to implement a  Pattern using Java
+Program to implement a Abstract Factory Pattern using Java
 Developed by: Srikaran M
 RegisterNumber: 212223040206
 */
@@ -33,87 +46,66 @@ RegisterNumber: 212223040206
 
 ## SOURCE CODE:
 ```
-import java.util.*;
+import java.util.Scanner;
 
-class ChatRoom {
-    private Map<String, User> users = new HashMap<>();
+interface Notification {
+    void notifyUser();
+}
 
-    public void registerUser(User user) {
-        users.put(user.getName(), user);
-    }
-
-    public void sendMessage(String from, String to, String message) {
-        User receiver = users.get(to);
-        if (receiver != null) {
-            receiver.receive(from, message);
-        } else {
-            System.out.println("User " + to + " not found");
-        }
+class EmailNotification implements Notification {
+    public void notifyUser() {
+        System.out.println("Sending Email Notification");
     }
 }
 
-class User {
-    private String name;
-    private ChatRoom chatRoom;
-
-    public User(String name, ChatRoom chatRoom) {
-        this.name = name;
-        this.chatRoom = chatRoom;
-        chatRoom.registerUser(this);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void send(String to, String message) {
-        chatRoom.sendMessage(name, to, message);
-    }
-
-    public void receive(String from, String message) {
-        System.out.println(from + " to " + name + ": " + message);
+class SMSNotification implements Notification {
+    public void notifyUser() {
+        System.out.println("Sending SMS Notification");
     }
 }
 
-public class ChatApp {
+class PushNotification implements Notification {
+    public void notifyUser() {
+        System.out.println("Sending Push Notification");
+    }
+}
+
+class NotificationFactory {
+    public Notification createNotification(String type) {
+        if (type == null) return null;
+        if (type.equalsIgnoreCase("email")) return new EmailNotification();
+        else if (type.equalsIgnoreCase("sms")) return new SMSNotification();
+        else if (type.equalsIgnoreCase("push")) return new PushNotification();
+        return null;
+    }
+}
+
+public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
-        ChatRoom room = new ChatRoom();
-        User user1 = new User(sc.nextLine(), room); 
-        User user2 = new User(sc.nextLine(), room);
-
-        int n = Integer.parseInt(sc.nextLine());
-        for (int i = 0; i < n; i++) {
-            String sender = sc.nextLine();
-            String receiver = sc.nextLine();
-            String message = sc.nextLine();
-
-            if (sender.equals(user1.getName())) {
-                user1.send(receiver, message);
-            } else if (sender.equals(user2.getName())) {
-                user2.send(receiver, message);
-            } else {
-                System.out.println("Unknown sender");
-            }
+        NotificationFactory factory = new NotificationFactory();
+        while (true) {
+            String input = sc.nextLine();
+            if (input.equalsIgnoreCase("exit")) break;
+            Notification n = factory.createNotification(input);
+            if (n != null) n.notifyUser();
+            else System.out.println("Invalid notification type: " + input);
         }
-
         sc.close();
     }
 }
 ```
 
 
-## OUTPUT:
-<img width="1143" height="846" alt="image" src="https://github.com/user-attachments/assets/e6ccf91b-1c65-4d94-bfdc-ddf4f68b9ad1" />
 
+
+
+## OUTPUT:
+<img width="943" height="423" alt="image" src="https://github.com/user-attachments/assets/4bf885fa-c016-47dd-bfe0-edf37e8a39e5" />
 
 
 ## RESULT:
-Therefore the program successfully demonstrates message exchange using the Mediator Pattern, with all user communication routed through the ChatRoom.
-
-
-
+Therefore the program successfully creates and sends the appropriate notification type using the Factory Pattern.
 
 
 
